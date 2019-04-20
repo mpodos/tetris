@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+
+from tkinter import *
+from tkinter import Canvas, Label, Tk, StringVar, messagebox
+from tkinter import colorchooser, filedialog
+
+from random import choice
+from collections import Counter
+
+class App(Frame):
+    '''Base framed application class'''
+    def __init__(self, master=None, Title="Application"):
+        Frame.__init__(self, master)
+        self.master.rowconfigure(0, weight=1)
+        self.master.columnconfigure(0, weight=1)
+        self.master.title(Title)
+        self.grid(sticky=N+E+S+W)
+        self.create()
+
+    def create(self):
+        '''Create all the widgets'''
+        self.bQuit = Button(self, text='Quit', command=self.quit)
+        self.bQuit.grid()
+
+class Tetris(Canvas):
+    '''Canvas with simple drawing'''
+    def mousedown(self, event):
+        '''Store mousedown coords'''
+        self.x0, self.y0 = event.x, event.y
+        self.cursor = None
+
+    def mousemove(self, event):
+        '''Do sometheing when drag a mouse'''
+        if self.cursor:
+            self.delete(self.cursor)
+        self.cursor = self.create_line((self.x0, self.y0, event.x, event.y), fill=self.foreground.get())
+
+    def mouseup(self, event):
+        '''Dragging is done'''
+        self.cursor = None
+
+    def __init__(self, master=None, *ap, foreground="black", **an):
+        self.foreground = StringVar()
+        self.foreground.set(foreground)
+        Canvas.__init__(self, master, *ap, **an)
+        self.bind("<Button-1>", self.mousedown)
+        self.bind("<B1-Motion>", self.mousemove)
+        self.bind("<ButtonRelease-1>", self.mouseup)
+
+class Game(App):
+
+    def create(self):
+        self.Control = Frame(borderwidth=3, relief="solid")
+        self.Control.grid(row=0, column=0, sticky=N+E+S+W)
+
+        headerIm = PhotoImage(file="tetris.png")
+        self.Control.Header = Label(self.Control, image=headerIm, borderwidth=3, relief="solid", width=400, bg="white")
+        self.Control.Header.image = headerIm
+        self.Control.Header.grid(row=0, columnspan=3, sticky=N+E+S+W)
+
+        self.Control.Canvas = Canvas(self.Control, width=400, height=600, borderwidth=3, relief="solid", bg="white")
+        self.Control.Canvas.grid(row=1, column=0, rowspan=6)
+
+        self.Control.Canvas1 = Canvas(self.Control, width=150, height=200, borderwidth=3, relief="solid", bg="white")
+        self.Control.Canvas1.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.Control.Lines = Label(self.Control, text="Lines", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Lines.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.Control.Score = Label(self.Control, text="Score", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Score.grid(row=3, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.Control.Best = Label(self.Control, text="Best", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Best.grid(row=4, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.Control.Pause = Button(self.Control, text="Pause", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Pause.grid(row=5, column=1,sticky=N+E+S+W)
+
+        self.Control.Quit = Button(self.Control, text="Quit", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Quit.grid(row=5, column=2, sticky=N+E+S+W)
+
+        im = PhotoImage(file='umaru.png')
+        self.Control.Image = Label(self.Control, image=im, borderwidth=3, relief="solid", width=150, height=200, bg="white")
+        self.Control.Image.image=im
+        self.Control.Image.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
+
+class Figure():
+    SHAPES = (
+        ("yellow", (0, 0), (0, 1), (1, 0), (1, 1)),     # O
+        ("lightblue", (0, 0), (0, 1), (0, 2), (0, 3)),  # I
+        ("red", (0, 1), (1, 1), (1, 0), (2, 0)),        # Z
+        ("green", (0, 0), (1, 0), (1, 1), (2, 1)),      # S
+        ("orange", (0, 2), (0, 1), (0, 0), (1, 0)),     # L
+        ("blue", (0, 0), (1, 0), (1, 1), (1, 2)),       # J
+        ("purple", (0, 0), (1, 0), (2, 0), (1, 1)),     # T
+    )
+
+
+if __name__ == "__main__":
+    app = Game(Title="Tetris")
+    app.mainloop()
