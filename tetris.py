@@ -3,9 +3,14 @@
 from tkinter import *
 from tkinter import Canvas, Label, Tk, StringVar, messagebox
 from tkinter import colorchooser, filedialog
+import time
 
 from random import choice
 from collections import Counter
+from pygame import mixer
+from threading import Thread
+
+musics = ["Chop Suey.wav", "Game Of Thrones Theme.wav", "Hypnotize.wav", "In The End.wav", "Numb.wav", "Stairway to Heaven.wav", "Star Wars.wav", "We Are The Champions.wav"]
 
 class App(Frame):
     '''Base framed application class'''
@@ -59,30 +64,39 @@ class Game(App):
         self.Control.Header.grid(row=0, columnspan=3, sticky=N+E+S+W)
 
         self.Control.Canvas = Canvas(self.Control, width=400, height=600, borderwidth=3, relief="solid", bg="white")
-        self.Control.Canvas.grid(row=1, column=0, rowspan=6)
+        self.Control.Canvas.grid(row=1, column=0, rowspan=7)
 
-        self.Control.Canvas1 = Canvas(self.Control, width=150, height=200, borderwidth=3, relief="solid", bg="white")
-        self.Control.Canvas1.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.CanvasNext = Canvas(self.Control, width=150, height=200, borderwidth=3, relief="solid", bg="white")
+        self.Control.CanvasNext.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.Control.ChangeMusic = Button(self.Control, text="Change Music", command=changeMusic, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.ChangeMusic.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.Lines = Label(self.Control, text="Lines", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.Lines.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Lines.grid(row=3, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.Score = Label(self.Control, text="Score", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.Score.grid(row=3, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Score.grid(row=4, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.Best = Label(self.Control, text="Best", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.Best.grid(row=4, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Best.grid(row=5, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.Pause = Button(self.Control, text="Pause", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.Pause.grid(row=5, column=1,sticky=N+E+S+W)
+        self.Control.Pause.grid(row=6, column=1,sticky=N+E+S+W)
 
         self.Control.Quit = Button(self.Control, text="Quit", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.Quit.grid(row=5, column=2, sticky=N+E+S+W)
+        self.Control.Quit.grid(row=6, column=2, sticky=N+E+S+W)
 
         im = PhotoImage(file='umaru.png')
         self.Control.Image = Label(self.Control, image=im, borderwidth=3, relief="solid", width=150, height=200, bg="white")
         self.Control.Image.image=im
-        self.Control.Image.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Image.grid(row=7, column=1, columnspan=2, sticky=N+E+S+W)
+
+mixer.init()
+def changeMusic():
+    mixer.music.load(choice(musics))
+    mixer.music.play(-1)
+
 
 class Figure():
     SHAPES = (
@@ -95,7 +109,8 @@ class Figure():
         ("purple", (0, 0), (1, 0), (2, 0), (1, 1)),     # T
     )
 
-
 if __name__ == "__main__":
+    mixer.music.load(choice(musics))
+    mixer.music.play(-1)
     app = Game(Title="Tetris")
     app.mainloop()
