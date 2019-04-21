@@ -65,6 +65,28 @@ class Game(App):
 
         self.Control.Canvas = Canvas(self.Control, width=400, height=600, borderwidth=3, relief="solid", bg="white")
         self.Control.Canvas.grid(row=1, column=0, rowspan=7)
+        # grid properties
+        self.rows = 24
+        self.columns = 16
+        self.cellwidth = 25
+        self.cellheight = 25
+        # pick colors for grid
+        colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"]
+        self.Colors = []
+        for column in range(self.columns):
+            column_arr = []
+            for row in range(self.rows):
+                column_arr.append(choice(colors))
+            self.Colors.append(column_arr)
+        # draw coloreful grid
+        self.rect = {}
+        for column in range(self.columns):
+            for row in range(self.rows):
+                x1 = column*self.cellwidth
+                y1 = row * self.cellheight
+                x2 = x1 + self.cellwidth
+                y2 = y1 + self.cellheight
+                self.rect[row,column] = self.Control.Canvas.create_rectangle(x1,y1,x2,y2, fill=self.Colors[column][row], tags="rect")
 
         self.Control.CanvasNext = Canvas(self.Control, width=150, height=200, borderwidth=3, relief="solid", bg="white")
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
