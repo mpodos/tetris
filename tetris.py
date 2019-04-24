@@ -107,6 +107,37 @@ class Game(App):
     def Gravity(self, figure):
         self.Control.Canvas.RemoveFigure(figure)
 
+    def FirstScreen(self):
+        self.Control = Frame(borderwidth=3, relief="solid")
+        self.Control.grid(row=0, column=0, sticky=N+E+S+W)
+
+        headerIm = PhotoImage(file="tetris.png")
+        self.Control.Header = Label(self.Control, image=headerIm, borderwidth=3, relief="solid", width=565, bg="white")
+        self.Control.Header.image = headerIm
+        self.Control.Header.grid(row=0, columnspan=4, sticky=N+E+S+W)
+
+        self.Control.Canvas = Tetris(self.Control, width=565, height=600, borderwidth=3, relief="solid", bg="white")
+
+        self.Control.NewGame = Button(self.Control, text="Score", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.NewGame.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.Control.NewGame = Button(self.Control, text="New Game", command=self.SecondScreen, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.NewGame.grid(row=4, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.Control.NewGame = Button(self.Control, text="Best", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.NewGame.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.Control.NewGame = Button(self.Control, text="Quit", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.NewGame.grid(row=8, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.Control.grid_rowconfigure(1, minsize=100)
+        self.Control.grid_rowconfigure(3, minsize=50)
+        self.Control.grid_rowconfigure(5, minsize=50)
+        self.Control.grid_rowconfigure(7, minsize=50)
+        self.Control.grid_columnconfigure(0, minsize=35)
+
+
+
     def SecondScreen(self):
         self.Control = Frame(borderwidth=3, relief="solid")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
@@ -139,7 +170,7 @@ class Game(App):
         self.Control.Pause = Button(self.Control, text="Pause", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.Pause.grid(row=6, column=1,sticky=N+E+S+W)
 
-        self.Control.Quit = Button(self.Control, text="Quit", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Quit = Button(self.Control, text="Quit", command=self.FirstScreen, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.Quit.grid(row=6, column=2, sticky=N+E+S+W)
 
         im = PhotoImage(file='umaru.png')
