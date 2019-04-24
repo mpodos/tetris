@@ -52,9 +52,62 @@ class Tetris(Canvas):
         self.bind("<B1-Motion>", self.mousemove)
         self.bind("<ButtonRelease-1>", self.mouseup)
 
-class Game(App):
+        self.rows = 24
+        self.columns = 16
+        self.cellwidth = 25
+        self.cellheight = 25
+        
+        self.Matrix = []
+        for _ in range(self.columns):
+            column_arr = []
+            for _ in range(self.rows):
+                column_arr.append("gray")
+            self.Matrix.append(column_arr)
+        
+        self.Rectangles = {}
+    
+    def HoldFigure(self, figure):
+        for cell in figure.Cells:
+            x, y = cell
+            if x > self.columns - 1 or x < 0:
+                continue
+            if y > self.rows - 1 or y < 0:
+                continue
 
-    def create(self):
+            self.Matrix[x][y] = figure.Color
+    
+    def RemoveFigure(self, figure):
+        for cell in figure.Cells:
+            x, y = cell
+            if x > self.columns - 1 or x < 0:
+                continue
+            if y > self.rows - 1 or y < 0:
+                continue
+
+            self.Matrix[x][y] = "gray"
+
+    def Draw(self):
+        for existing in self.Rectangles:
+            self.delete(existing)
+
+        self.Rectangles = {}
+        for column in range(self.columns):
+            for row in range(self.rows):
+                x1 = column*self.cellwidth
+                y1 = row * self.cellheight
+                x2 = x1 + self.cellwidth
+                y2 = y1 + self.cellheight
+                self.Rectangles[row,column] = self.create_rectangle(x1,y1,x2,y2, fill=self.Matrix[column][row], tags="rect")
+
+class Game(App):
+    def CreateFigure(self):
+        figure = Figure()
+        self.Control.Canvas.HoldFigure(figure)
+
+    def Gravity(self, figure):
+        self.Control.Canvas.RemoveFigure(figure)
+
+    def SecondScreen(self):
         self.Control = Frame(borderwidth=3, relief="solid")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
@@ -63,30 +116,10 @@ class Game(App):
         self.Control.Header.image = headerIm
         self.Control.Header.grid(row=0, columnspan=3, sticky=N+E+S+W)
 
-        self.Control.Canvas = Canvas(self.Control, width=400, height=600, borderwidth=3, relief="solid", bg="white")
+        self.Control.Canvas = Tetris(self.Control, width=400, height=600, borderwidth=3, relief="solid", bg="white")
         self.Control.Canvas.grid(row=1, column=0, rowspan=7)
-        # grid properties
-        self.rows = 24
-        self.columns = 16
-        self.cellwidth = 25
-        self.cellheight = 25
-        # pick colors for grid
-        colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"]
-        self.Colors = []
-        for column in range(self.columns):
-            column_arr = []
-            for row in range(self.rows):
-                column_arr.append(choice(colors))
-            self.Colors.append(column_arr)
-        # draw coloreful grid
-        self.rect = {}
-        for column in range(self.columns):
-            for row in range(self.rows):
-                x1 = column*self.cellwidth
-                y1 = row * self.cellheight
-                x2 = x1 + self.cellwidth
-                y2 = y1 + self.cellheight
-                self.rect[row,column] = self.Control.Canvas.create_rectangle(x1,y1,x2,y2, fill=self.Colors[column][row], tags="rect")
+        self.CreateFigure()
+        self.Control.Canvas.Draw()
 
         self.Control.CanvasNext = Canvas(self.Control, width=150, height=200, borderwidth=3, relief="solid", bg="white")
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
@@ -113,6 +146,9 @@ class Game(App):
         self.Control.Image = Label(self.Control, image=im, borderwidth=3, relief="solid", width=150, height=200, bg="white")
         self.Control.Image.image=im
         self.Control.Image.grid(row=7, column=1, columnspan=2, sticky=N+E+S+W)
+    
+    def create(self):
+        self.SecondScreen()
 
 mixer.init()
 def changeMusic():
@@ -130,6 +166,24 @@ class Figure():
         ("blue", (0, 0), (1, 0), (1, 1), (1, 2)),       # J
         ("purple", (0, 0), (1, 0), (2, 0), (1, 1)),     # T
     )
+
+    def __init__(self, x = 8, y = 12, angle = 0):
+        figure = choice(self.SHAPES)
+        self.Color = figure[0]
+        self.Cells = [(x + cell[0], y + cell[1]) for cell in figure[1:]]
+
+        times = int(angle / 90)
+        for _ in range(times):
+            self.RotateRight()
+
+    def MoveDown(self):
+        new_cells = [(cell[0], cell[1]-1) for cell in self.Cells]
+        self.Cells = new_cells
+    
+    def RotateRight(self):
+        new_cells = []
+        # Implement me
+        self.Cells = new_cells
 
 if __name__ == "__main__":
     mixer.music.load(choice(musics))
