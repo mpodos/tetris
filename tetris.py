@@ -240,7 +240,7 @@ class Figure():
         ("purple", (0, 0), (1, 0), (2, 0), (1, 1)),     # T
     )
 
-    def __init__(self, x = 8, y = 12, angle = 0):
+    def __init__(self, x = 7, y = 0, angle = 0):
         figure = choice(self.SHAPES)
         self.Color = figure[0]
         self.Cells = [(x + cell[0], y + cell[1]) for cell in figure[1:]]
