@@ -101,11 +101,14 @@ class Tetris(Canvas):
 
 class Game(App):
     def CreateFigure(self):
-        figure = Figure()
-        self.Control.Canvas.HoldFigure(figure)
+        self.CurrentFigure = Figure()
+        self.Control.Canvas.HoldFigure(self.CurrentFigure)
 
-    def Gravity(self, figure):
-        self.Control.Canvas.RemoveFigure(figure)
+    def Gravity(self):
+        self.Control.Canvas.RemoveFigure(self.CurrentFigure)
+        self.CurrentFigure.MoveDown()
+        self.Control.Canvas.HoldFigure(self.CurrentFigure)
+
 
     def FirstScreen(self):
         self.Control = Frame(borderwidth=3, relief="solid")
@@ -116,7 +119,7 @@ class Game(App):
         self.Control.Header.image = headerIm
         self.Control.Header.grid(row=0, columnspan=4, sticky=N+E+S+W)
 
-        self.Control.Canvas = Tetris(self.Control, width=565, height=600, borderwidth=3, relief="solid", bg="white")
+        self.Control.Canvas = Tetris(self.Control, width=565, borderwidth=3, relief="solid", bg="white")
 
         self.Control.NewGame = Button(self.Control, text="Score", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.NewGame.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
@@ -136,8 +139,6 @@ class Game(App):
         self.Control.grid_rowconfigure(7, minsize=50)
         self.Control.grid_columnconfigure(0, minsize=35)
 
-
-
     def SecondScreen(self):
         self.Control = Frame(borderwidth=3, relief="solid")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
@@ -149,8 +150,6 @@ class Game(App):
 
         self.Control.Canvas = Tetris(self.Control, width=400, height=600, borderwidth=3, relief="solid", bg="white")
         self.Control.Canvas.grid(row=1, column=0, rowspan=7)
-        self.CreateFigure()
-        self.Control.Canvas.Draw()
 
         self.Control.CanvasNext = Canvas(self.Control, width=150, height=200, borderwidth=3, relief="solid", bg="white")
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
@@ -167,7 +166,7 @@ class Game(App):
         self.Control.Best = Label(self.Control, text="Best", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.Best.grid(row=5, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.Pause = Button(self.Control, text="Pause", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Pause = Button(self.Control, text="Pause", command=self.pause, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.Pause.grid(row=6, column=1,sticky=N+E+S+W)
 
         self.Control.Quit = Button(self.Control, text="Quit", command=self.FirstScreen, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
@@ -177,9 +176,29 @@ class Game(App):
         self.Control.Image = Label(self.Control, image=im, borderwidth=3, relief="solid", width=150, height=200, bg="white")
         self.Control.Image.image=im
         self.Control.Image.grid(row=7, column=1, columnspan=2, sticky=N+E+S+W)
+
+        self.CreateFigure()
+        self._job = None
+        self.Tick()
     
+    def Tick(self):
+        self.Gravity()
+        self.Control.Canvas.Draw()
+        self._job = self.after(1000, self.Tick)
+
     def create(self):
-        self.SecondScreen()
+        self.FirstScreen()
+
+    def resume(self):
+        self.Control.Pause.config(command = self.pause, text = "Play")
+        self.Tick()
+
+    def pause(self):
+        if self._job is not None:
+            self.after_cancel(self._job)
+            self._job = None
+
+        self.Control.Pause.config(command = self.resume, text = "Resume")
 
 mixer.init()
 def changeMusic():
@@ -208,7 +227,7 @@ class Figure():
             self.RotateRight()
 
     def MoveDown(self):
-        new_cells = [(cell[0], cell[1]-1) for cell in self.Cells]
+        new_cells = [(cell[0], cell[1]+1) for cell in self.Cells]
         self.Cells = new_cells
     
     def RotateRight(self):
