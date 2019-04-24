@@ -109,8 +109,23 @@ class Game(App):
         self.CurrentFigure.MoveDown()
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
 
-
     def FirstScreen(self):
+        # Kostyl
+        self.Control = Frame(borderwidth=3, relief="solid")
+        self.Control.grid(row=0, column=0, sticky=N+E+S+W)
+
+        headerIm = PhotoImage(file="tetris.png")
+        self.Control.Header = Label(self.Control, image=headerIm, borderwidth=3, relief="solid", width=400, bg="white")
+        self.Control.Header.image = headerIm
+        self.Control.Header.grid(row=0, columnspan=3, sticky=N+E+S+W)
+
+        self.Control.Canvas = Tetris(self.Control, width=400, height=600, borderwidth=3, relief="solid", bg="white")
+        self.Control.Canvas.grid(row=1, column=0, rowspan=7)
+
+        self.Control.CanvasNext = Canvas(self.Control, width=150, height=200, borderwidth=3, relief="solid", bg="white")
+        self.Control.CanvasNext.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
+        # End of kostyl
+
         self.Control = Frame(borderwidth=3, relief="solid")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
@@ -169,7 +184,7 @@ class Game(App):
         self.Control.Pause = Button(self.Control, text="Pause", command=self.pause, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.Pause.grid(row=6, column=1,sticky=N+E+S+W)
 
-        self.Control.Quit = Button(self.Control, text="Quit", command=self.FirstScreen, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Quit = Button(self.Control, text="Quit", command=self.terminate, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.Quit.grid(row=6, column=2, sticky=N+E+S+W)
 
         im = PhotoImage(file='umaru.png')
@@ -191,7 +206,7 @@ class Game(App):
 
     def resume(self):
         self.Control.Pause.config(command = self.pause, text = "Play")
-        self.Tick()
+        self._job = self.after(1000, self.Tick)
 
     def pause(self):
         if self._job is not None:
@@ -199,6 +214,14 @@ class Game(App):
             self._job = None
 
         self.Control.Pause.config(command = self.resume, text = "Resume")
+    
+    def terminate(self):
+        if self._job is not None:
+            self.after_cancel(self._job)
+            self._job = None
+        
+        self.FirstScreen()
+
 
 mixer.init()
 def changeMusic():
