@@ -29,29 +29,11 @@ class App(Frame):
         self.bQuit.grid()
 
 class Tetris(Canvas):
-    '''Canvas with simple drawing'''
-    def mousedown(self, event):
-        '''Store mousedown coords'''
-        self.x0, self.y0 = event.x, event.y
-        self.cursor = None
-
-    def mousemove(self, event):
-        '''Do sometheing when drag a mouse'''
-        if self.cursor:
-            self.delete(self.cursor)
-        self.cursor = self.create_line((self.x0, self.y0, event.x, event.y), fill=self.foreground.get())
-
-    def mouseup(self, event):
-        '''Dragging is done'''
-        self.cursor = None
 
     def __init__(self, master=None, *ap, foreground="black", **an):
         self.foreground = StringVar()
         self.foreground.set(foreground)
         Canvas.__init__(self, master, *ap, **an)
-        # self.bind("<Button-1>", self.mousedown)
-        # self.bind("<B1-Motion>", self.mousemove)
-        # self.bind("<ButtonRelease-1>", self.mouseup)
 
         self.rows = 24
         self.columns = 16
@@ -136,18 +118,17 @@ class Game(App):
         self.Control.Header.grid(row=0, columnspan=4, sticky=N+E+S+W)
 
         self.Control.Canvas = Tetris(self.Control, width=615, borderwidth=3, relief="solid", bg="white")
-
-        self.Control.NewGame = Button(self.Control, text="Score", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.NewGame.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Score = Label(self.Control, text="Score", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Score.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.NewGame = Button(self.Control, text="New Game", command=self.SecondScreen, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.NewGame.grid(row=4, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.NewGame = Button(self.Control, text="Best", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.NewGame.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Best = Label(self.Control, text="Best", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Best.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.NewGame = Button(self.Control, text="Quit", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.NewGame.grid(row=8, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Quit = Button(self.Control, text="Quit", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Quit.grid(row=8, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.grid_rowconfigure(1, minsize=100)
         self.Control.grid_rowconfigure(3, minsize=50)
