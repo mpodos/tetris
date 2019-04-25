@@ -4,13 +4,14 @@ from tkinter import *
 from tkinter import Canvas, Label, Tk, StringVar, messagebox
 from tkinter import colorchooser, filedialog
 import time
+import os
 
 from random import choice
 from collections import Counter
 from pygame import mixer
 from threading import Thread
 
-musics = ["Chop Suey.wav", "Game Of Thrones Theme.wav", "Hypnotize.wav", "In The End.wav", "Numb.wav", "Stairway to Heaven.wav", "Star Wars.wav", "We Are The Champions.wav"]
+musics = os.listdir("./music")
 
 class App(Frame):
     '''Base framed application class'''
@@ -27,30 +28,15 @@ class App(Frame):
         self.bQuit = Button(self, text='Quit', command=self.quit)
         self.bQuit.grid()
 
+def Hey(event):
+    print(event)
+
 class Tetris(Canvas):
-    '''Canvas with simple drawing'''
-    def mousedown(self, event):
-        '''Store mousedown coords'''
-        self.x0, self.y0 = event.x, event.y
-        self.cursor = None
-
-    def mousemove(self, event):
-        '''Do sometheing when drag a mouse'''
-        if self.cursor:
-            self.delete(self.cursor)
-        self.cursor = self.create_line((self.x0, self.y0, event.x, event.y), fill=self.foreground.get())
-
-    def mouseup(self, event):
-        '''Dragging is done'''
-        self.cursor = None
 
     def __init__(self, master=None, *ap, foreground="black", **an):
         self.foreground = StringVar()
         self.foreground.set(foreground)
         Canvas.__init__(self, master, *ap, **an)
-        self.bind("<Button-1>", self.mousedown)
-        self.bind("<B1-Motion>", self.mousemove)
-        self.bind("<ButtonRelease-1>", self.mouseup)
 
         self.rows = 24
         self.columns = 16
@@ -109,9 +95,27 @@ class Game(App):
         self.CurrentFigure.MoveDown()
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
 
+    def MoveLeft(self, event):
+        self.Control.Canvas.RemoveFigure(self.CurrentFigure)
+        self.CurrentFigure.MoveLeft()
+        self.Control.Canvas.HoldFigure(self.CurrentFigure)
+        self.Control.Canvas.Draw()
+
+    def MoveRight(self, event):
+        self.Control.Canvas.RemoveFigure(self.CurrentFigure)
+        self.CurrentFigure.MoveRight()
+        self.Control.Canvas.HoldFigure(self.CurrentFigure)
+        self.Control.Canvas.Draw()
+
+    def Rotate(self, event):
+        self.Control.Canvas.RemoveFigure(self.CurrentFigure)
+        self.CurrentFigure.Rotate()
+        self.Control.Canvas.HoldFigure(self.CurrentFigure)
+        self.Control.Canvas.Draw()
+
     def FirstScreen(self):
         # Kostyl
-        self.Control = Frame(borderwidth=3, relief="solid")
+        self.Control = Frame(borderwidth=3, relief="solid", bg="white")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
         headerIm = PhotoImage(file="tetris.png")
@@ -126,27 +130,26 @@ class Game(App):
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
         # End of kostyl
 
-        self.Control = Frame(borderwidth=3, relief="solid")
+        self.Control = Frame(borderwidth=3, relief="solid", bg="white")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
         headerIm = PhotoImage(file="tetris.png")
-        self.Control.Header = Label(self.Control, image=headerIm, borderwidth=3, relief="solid", width=565, bg="white")
+        self.Control.Header = Label(self.Control, image=headerIm, borderwidth=3, relief="solid", width=615, bg="white")
         self.Control.Header.image = headerIm
         self.Control.Header.grid(row=0, columnspan=4, sticky=N+E+S+W)
 
-        self.Control.Canvas = Tetris(self.Control, width=565, borderwidth=3, relief="solid", bg="white")
-
-        self.Control.NewGame = Button(self.Control, text="Score", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.NewGame.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Canvas = Tetris(self.Control, width=615, borderwidth=3, relief="solid", bg="white")
+        self.Control.Score = Label(self.Control, text="Score", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Score.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.NewGame = Button(self.Control, text="New Game", command=self.SecondScreen, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.NewGame.grid(row=4, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.NewGame = Button(self.Control, text="Best", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.NewGame.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Best = Label(self.Control, text="Best", borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Best.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.NewGame = Button(self.Control, text="Quit", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
-        self.Control.NewGame.grid(row=8, column=1, columnspan=2, sticky=N+E+S+W)
+        self.Control.Quit = Button(self.Control, text="Quit", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
+        self.Control.Quit.grid(row=8, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.grid_rowconfigure(1, minsize=100)
         self.Control.grid_rowconfigure(3, minsize=50)
@@ -166,7 +169,7 @@ class Game(App):
         self.Control.Canvas = Tetris(self.Control, width=400, height=600, borderwidth=3, relief="solid", bg="white")
         self.Control.Canvas.grid(row=1, column=0, rowspan=7)
 
-        self.Control.CanvasNext = Canvas(self.Control, width=150, height=200, borderwidth=3, relief="solid", bg="white")
+        self.Control.CanvasNext = Canvas(self.Control, width=200, height=200, borderwidth=3, relief="solid", bg="white")
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.ChangeMusic = Button(self.Control, text="Change Music", command=changeMusic, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
@@ -194,6 +197,9 @@ class Game(App):
 
         self.CreateFigure()
         self._job = None
+        self.bind_all("<Left>", self.MoveLeft)
+        self.bind_all("<Right>", self.MoveRight)
+        self.bind_all("<space>", self.Rotate)
         self.Tick()
     
     def Tick(self):
@@ -225,7 +231,7 @@ class Game(App):
 
 mixer.init()
 def changeMusic():
-    mixer.music.load(choice(musics))
+    mixer.music.load('./music/'+choice(musics))
     mixer.music.play(-1)
 
 
@@ -252,14 +258,45 @@ class Figure():
     def MoveDown(self):
         new_cells = [(cell[0], cell[1]+1) for cell in self.Cells]
         self.Cells = new_cells
-    
-    def RotateRight(self):
-        new_cells = []
-        # Implement me
+
+    def MoveLeft(self):
+        new_cells = [(cell[0]-1, cell[1]) for cell in self.Cells]
         self.Cells = new_cells
+    
+    def MoveRight(self):
+        new_cells = [(cell[0]+1, cell[1]) for cell in self.Cells]
+        self.Cells = new_cells
+    
+    def Rotate(self):
+        shift_x = 100000
+        shift_y = 100000
+        old_cells_shifted = []
+        for cell in self.Cells:
+            if cell[0] < shift_x:
+                shift_x = cell[0]
+            if cell[1] < shift_y:
+                shift_y = cell[1]
+        for cell in self.Cells:
+            old_cells_shifted.append((cell[0]-shift_x, cell[1]-shift_y))
+        new_cells = []
+        min_x = 0
+        min_y = 0
+        for cell in old_cells_shifted:
+            tmp_cell = (cell[1],-cell[0])
+            if tmp_cell[0] < min_x:
+                min_x = tmp_cell[0]
+            if tmp_cell[1] < min_y:
+                min_y = tmp_cell[1]
+            new_cells.append(tmp_cell)
+        new_cells_shifted = []
+        for cell in new_cells:
+            new_cells_shifted.append((cell[0]-min_x+shift_x, cell[1]-min_y+shift_y))
+
+        # Implement me
+        self.Cells = new_cells_shifted
 
 if __name__ == "__main__":
-    mixer.music.load(choice(musics))
+    mixer.music.load('./music/'+choice(musics))
     mixer.music.play(-1)
     app = Game(Title="Tetris")
     app.mainloop()
