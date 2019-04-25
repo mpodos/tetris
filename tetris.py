@@ -4,7 +4,8 @@ from tkinter import Canvas, Label, Button, Frame, \
                     N, E, W, S, PhotoImage, StringVar
 import os
 
-from random import choice
+from random import choice, randint
+from collections import Counter
 from pygame import mixer
 
 musics = os.listdir("./music")
@@ -92,6 +93,16 @@ class Game(App):
     def Gravity(self):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
         self.CurrentFigure.MoveDown()
+        if self.IsLanded():
+            self.CurrentFigure.MoveUp()
+            self.Control.Canvas.HoldFigure(self.CurrentFigure)
+            for cell in self.CurrentFigure.Cells:
+                self.busy_cells.append(cell)
+
+            self.CreateFigure()
+            self.Control.Canvas.HoldFigure(self.CurrentFigure)
+            return
+
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
 
     def MoveLeft(self, event):
@@ -111,6 +122,15 @@ class Game(App):
         self.CurrentFigure.Rotate()
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
         self.Control.Canvas.Draw()
+    
+    def IsLanded(self):
+        intersected = False
+        for cell in self.CurrentFigure.Cells:
+            if cell in self.busy_cells or cell[1] > self.Control.Canvas.rows - 1:
+                intersected = True
+                break
+            
+        return intersected
 
     def FirstScreen(self):
         # Kostyl
@@ -242,6 +262,7 @@ class Game(App):
 
         self.CreateFigure()
         self._job = None
+        self.busy_cells = []
         self.bind_all("<Left>", self.MoveLeft)
         self.bind_all("<Right>", self.MoveRight)
         self.bind_all("<space>", self.Rotate)
@@ -250,14 +271,15 @@ class Game(App):
     def Tick(self):
         self.Gravity()
         self.Control.Canvas.Draw()
-        self._job = self.after(1000, self.Tick)
+        self.Control.Lines.config(text = randint(1,100))
+        self._job = self.after(500, self.Tick)
 
     def create(self):
         self.FirstScreen()
 
     def resume(self):
         self.Control.Pause.config(command=self.pause, text="Play")
-        self._job = self.after(1000, self.Tick)
+        self._job = self.after(500, self.Tick)
 
     def pause(self):
         if self._job is not None:
@@ -300,7 +322,11 @@ class Figure():
 
         times = int(angle / 90)
         for _ in range(times):
-            self.RotateRight()
+            self.Rotate()
+
+    def MoveUp(self):
+        new_cells = [(cell[0], cell[1]-1) for cell in self.Cells]
+        self.Cells = new_cells
 
     def MoveDown(self):
         new_cells = [(cell[0], cell[1]+1) for cell in self.Cells]
