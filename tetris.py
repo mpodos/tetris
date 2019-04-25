@@ -49,9 +49,9 @@ class Tetris(Canvas):
         self.foreground = StringVar()
         self.foreground.set(foreground)
         Canvas.__init__(self, master, *ap, **an)
-        self.bind("<Button-1>", self.mousedown)
-        self.bind("<B1-Motion>", self.mousemove)
-        self.bind("<ButtonRelease-1>", self.mouseup)
+        # self.bind("<Button-1>", self.mousedown)
+        # self.bind("<B1-Motion>", self.mousemove)
+        # self.bind("<ButtonRelease-1>", self.mouseup)
 
         self.rows = 24
         self.columns = 16
