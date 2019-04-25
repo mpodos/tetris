@@ -5,7 +5,6 @@ from tkinter import Canvas, Label, Button, Frame, \
 import os
 
 from random import choice, randint
-from collections import Counter
 from pygame import mixer
 
 musics = os.listdir("./music")
@@ -122,14 +121,14 @@ class Game(App):
         self.CurrentFigure.Rotate()
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
         self.Control.Canvas.Draw()
-    
+
     def IsLanded(self):
         intersected = False
         for cell in self.CurrentFigure.Cells:
-            if cell in self.busy_cells or cell[1] > self.Control.Canvas.rows - 1:
+            rows = self.Control.Canvas.rows
+            if cell in self.busy_cells or cell[1] > rows:
                 intersected = True
                 break
-            
         return intersected
 
     def FirstScreen(self):
@@ -271,7 +270,7 @@ class Game(App):
     def Tick(self):
         self.Gravity()
         self.Control.Canvas.Draw()
-        self.Control.Lines.config(text = randint(1,100))
+        self.Control.Lines.config(text=randint(1, 100))
         self._job = self.after(500, self.Tick)
 
     def create(self):
