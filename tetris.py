@@ -28,6 +28,9 @@ class App(Frame):
         self.bQuit = Button(self, text='Quit', command=self.quit)
         self.bQuit.grid()
 
+def Hey(event):
+    print(event)
+
 class Tetris(Canvas):
 
     def __init__(self, master=None, *ap, foreground="black", **an):
@@ -91,6 +94,24 @@ class Game(App):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
         self.CurrentFigure.MoveDown()
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
+
+    def MoveLeft(self, event):
+        self.Control.Canvas.RemoveFigure(self.CurrentFigure)
+        self.CurrentFigure.MoveLeft()
+        self.Control.Canvas.HoldFigure(self.CurrentFigure)
+        self.Control.Canvas.Draw()
+
+    def MoveRight(self, event):
+        self.Control.Canvas.RemoveFigure(self.CurrentFigure)
+        self.CurrentFigure.MoveRight()
+        self.Control.Canvas.HoldFigure(self.CurrentFigure)
+        self.Control.Canvas.Draw()
+
+    def Rotate(self, event):
+        self.Control.Canvas.RemoveFigure(self.CurrentFigure)
+        self.CurrentFigure.Rotate()
+        self.Control.Canvas.HoldFigure(self.CurrentFigure)
+        self.Control.Canvas.Draw()
 
     def FirstScreen(self):
         # Kostyl
@@ -176,6 +197,9 @@ class Game(App):
 
         self.CreateFigure()
         self._job = None
+        self.bind_all("<Left>", self.MoveLeft)
+        self.bind_all("<Right>", self.MoveRight)
+        self.bind_all("<space>", self.Rotate)
         self.Tick()
     
     def Tick(self):
@@ -234,11 +258,42 @@ class Figure():
     def MoveDown(self):
         new_cells = [(cell[0], cell[1]+1) for cell in self.Cells]
         self.Cells = new_cells
-    
-    def RotateRight(self):
-        new_cells = []
-        # Implement me
+
+    def MoveLeft(self):
+        new_cells = [(cell[0]-1, cell[1]) for cell in self.Cells]
         self.Cells = new_cells
+    
+    def MoveRight(self):
+        new_cells = [(cell[0]+1, cell[1]) for cell in self.Cells]
+        self.Cells = new_cells
+    
+    def Rotate(self):
+        shift_x = 100000
+        shift_y = 100000
+        old_cells_shifted = []
+        for cell in self.Cells:
+            if cell[0] < shift_x:
+                shift_x = cell[0]
+            if cell[1] < shift_y:
+                shift_y = cell[1]
+        for cell in self.Cells:
+            old_cells_shifted.append((cell[0]-shift_x, cell[1]-shift_y))
+        new_cells = []
+        min_x = 0
+        min_y = 0
+        for cell in old_cells_shifted:
+            tmp_cell = (cell[1],-cell[0])
+            if tmp_cell[0] < min_x:
+                min_x = tmp_cell[0]
+            if tmp_cell[1] < min_y:
+                min_y = tmp_cell[1]
+            new_cells.append(tmp_cell)
+        new_cells_shifted = []
+        for cell in new_cells:
+            new_cells_shifted.append((cell[0]-min_x+shift_x, cell[1]-min_y+shift_y))
+
+        # Implement me
+        self.Cells = new_cells_shifted
 
 if __name__ == "__main__":
     mixer.music.load('./music/'+choice(musics))
