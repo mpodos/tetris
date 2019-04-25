@@ -4,13 +4,14 @@ from tkinter import *
 from tkinter import Canvas, Label, Tk, StringVar, messagebox
 from tkinter import colorchooser, filedialog
 import time
+import os
 
 from random import choice
 from collections import Counter
 from pygame import mixer
 from threading import Thread
 
-musics = ["Chop Suey.wav", "Game Of Thrones Theme.wav", "Hypnotize.wav", "In The End.wav", "Numb.wav", "Stairway to Heaven.wav", "Star Wars.wav", "We Are The Champions.wav"]
+musics = os.listdir("./music")
 
 class App(Frame):
     '''Base framed application class'''
@@ -111,7 +112,7 @@ class Game(App):
 
     def FirstScreen(self):
         # Kostyl
-        self.Control = Frame(borderwidth=3, relief="solid")
+        self.Control = Frame(borderwidth=3, relief="solid", bg="white")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
         headerIm = PhotoImage(file="tetris.png")
@@ -126,15 +127,15 @@ class Game(App):
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
         # End of kostyl
 
-        self.Control = Frame(borderwidth=3, relief="solid")
+        self.Control = Frame(borderwidth=3, relief="solid", bg="white")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
         headerIm = PhotoImage(file="tetris.png")
-        self.Control.Header = Label(self.Control, image=headerIm, borderwidth=3, relief="solid", width=565, bg="white")
+        self.Control.Header = Label(self.Control, image=headerIm, borderwidth=3, relief="solid", width=615, bg="white")
         self.Control.Header.image = headerIm
         self.Control.Header.grid(row=0, columnspan=4, sticky=N+E+S+W)
 
-        self.Control.Canvas = Tetris(self.Control, width=565, borderwidth=3, relief="solid", bg="white")
+        self.Control.Canvas = Tetris(self.Control, width=615, borderwidth=3, relief="solid", bg="white")
 
         self.Control.NewGame = Button(self.Control, text="Score", command=self.quit, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
         self.Control.NewGame.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
@@ -166,7 +167,7 @@ class Game(App):
         self.Control.Canvas = Tetris(self.Control, width=400, height=600, borderwidth=3, relief="solid", bg="white")
         self.Control.Canvas.grid(row=1, column=0, rowspan=7)
 
-        self.Control.CanvasNext = Canvas(self.Control, width=150, height=200, borderwidth=3, relief="solid", bg="white")
+        self.Control.CanvasNext = Canvas(self.Control, width=200, height=200, borderwidth=3, relief="solid", bg="white")
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2, sticky=N+E+S+W)
 
         self.Control.ChangeMusic = Button(self.Control, text="Change Music", command=changeMusic, borderwidth=3, relief="solid", font=("Liberation Sans", 14), bg="white")
@@ -225,7 +226,7 @@ class Game(App):
 
 mixer.init()
 def changeMusic():
-    mixer.music.load(choice(musics))
+    mixer.music.load('./music/'+choice(musics))
     mixer.music.play(-1)
 
 
@@ -259,7 +260,7 @@ class Figure():
         self.Cells = new_cells
 
 if __name__ == "__main__":
-    mixer.music.load(choice(musics))
+    mixer.music.load('./music/'+choice(musics))
     mixer.music.play(-1)
     app = Game(Title="Tetris")
     app.mainloop()
