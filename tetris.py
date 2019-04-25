@@ -28,15 +28,15 @@ class App(Frame):
 
 class Tetris(Canvas):
 
-    def __init__(self, master=None, *ap, foreground="black", **an):
+    def __init__(self, master=None, *ap, foreground="black", rows, columns, cell, **an):
         self.foreground = StringVar()
         self.foreground.set(foreground)
         Canvas.__init__(self, master, *ap, **an)
 
-        self.rows = 24
-        self.columns = 16
-        self.cellwidth = 25
-        self.cellheight = 25
+        self.rows = rows
+        self.columns = columns
+        self.cellwidth = cell
+        self.cellheight = cell
 
         self.Matrix = []
         for _ in range(self.columns):
@@ -86,8 +86,18 @@ class Tetris(Canvas):
 
 class Game(App):
     def CreateFigure(self):
-        self.CurrentFigure = Figure()
+        if self.NextFigure is not None:
+            self.Control.CanvasNext.RemoveFigure(self.NextFigure.Shifted())
+            self.CurrentFigure = self.NextFigure
+        else:
+            self.CurrentFigure = Figure()
+
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
+
+        # Draw next figure
+        self.NextFigure = Figure()
+        self.Control.CanvasNext.HoldFigure(self.NextFigure.Shifted())
+        self.Control.CanvasNext.Draw()
 
     def Gravity(self):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
@@ -99,7 +109,6 @@ class Game(App):
                 self.busy_cells.append(cell)
 
             self.CreateFigure()
-            self.Control.Canvas.HoldFigure(self.CurrentFigure)
             return
 
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
@@ -145,7 +154,8 @@ class Game(App):
 
         self.Control.Canvas = Tetris(self.Control, width=400,
                                      height=600, borderwidth=3,
-                                     relief="solid", bg="white")
+                                     relief="solid", bg="white",
+                                     rows = 24, columns = 26, cell = 25)
         self.Control.Canvas.grid(row=1, column=0, rowspan=7)
 
         self.Control.CanvasNext = Canvas(self.Control, width=150,
@@ -166,7 +176,8 @@ class Game(App):
         self.Control.Header.grid(row=0, columnspan=4, sticky=N+E+S+W)
 
         self.Control.Canvas = Tetris(self.Control, width=615, borderwidth=3,
-                                     relief="solid", bg="white")
+                                     relief="solid", bg="white",
+                                     rows = 24, columns = 26, cell = 25)
         self.Control.Score = Label(self.Control, text="Score", borderwidth=3,
                                    relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
@@ -208,12 +219,14 @@ class Game(App):
         self.Control.Header.grid(row=0, columnspan=3, sticky=N+E+S+W)
 
         self.Control.Canvas = Tetris(self.Control, width=400, height=600,
-                                     borderwidth=3, relief="solid", bg="white")
+                                     borderwidth=3, relief="solid", bg="white",
+                                     rows = 24, columns = 26, cell = 25)
         self.Control.Canvas.grid(row=1, column=0, rowspan=7)
 
-        self.Control.CanvasNext = Canvas(self.Control, width=200, height=200,
+        self.Control.CanvasNext = Tetris(self.Control, width=200, height=200,
                                          borderwidth=3, relief="solid",
-                                         bg="white")
+                                         bg="white",
+                                         rows = 8, columns = 8, cell = 25)
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2,
                                      sticky=N+E+S+W)
 
@@ -259,6 +272,7 @@ class Game(App):
         self.Control.Image.image = im
         self.Control.Image.grid(row=7, column=1, columnspan=2, sticky=N+E+S+W)
 
+        self.NextFigure = None
         self.CreateFigure()
         self._job = None
         self.busy_cells = []
@@ -323,6 +337,12 @@ class Figure():
         for _ in range(times):
             self.Rotate()
 
+    def Shifted(self):
+        shifted = Figure()
+        shifted.Color = self.Color
+        shifted.Cells = [(cell[0]-4, cell[1]+3) for cell in self.Cells]
+        return shifted
+        
     def MoveUp(self):
         new_cells = [(cell[0], cell[1]-1) for cell in self.Cells]
         self.Cells = new_cells
