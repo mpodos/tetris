@@ -6,6 +6,7 @@ import os
 
 from random import choice, randint
 from pygame import mixer
+import datetime
 
 musics = os.listdir("./music")
 
@@ -68,9 +69,6 @@ class Tetris(Canvas):
             self.Matrix[x][y] = "gray"
 
     def Draw(self):
-        for existing in self.Rects:
-            self.delete(existing)
-
         self.Rects = {}
         for column in range(self.columns):
             for row in range(self.rows):
@@ -83,6 +81,11 @@ class Tetris(Canvas):
                                                                 x2, y2,
                                                                 fill=fill,
                                                                 tags="rect")
+    
+    def ReDraw(self):
+        for column in range(self.columns):
+            for row in range(self.rows):
+                self.itemconfig(self.Rects[row, column], fill=self.Matrix[column][row])
 
     def isValidCoords(self, coords):
         # print(coords, self.columns)
@@ -109,7 +112,7 @@ class Game(App):
         # Draw next figure
         self.NextFigure = Figure()
         self.Control.CanvasNext.HoldFigure(self.NextFigure.Shifted())
-        self.Control.CanvasNext.Draw()
+        self.Control.CanvasNext.ReDraw()
 
     def Gravity(self):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
@@ -127,7 +130,7 @@ class Game(App):
         if self.Control.Canvas.isValidCoords(coords):
             self.CurrentFigure.Cells = coords
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
-        self.Control.Canvas.Draw()
+        self.Control.Canvas.ReDraw()
 
     def MoveRight(self, event):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
@@ -135,7 +138,7 @@ class Game(App):
         if self.Control.Canvas.isValidCoords(coords):
             self.CurrentFigure.Cells = coords
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
-        self.Control.Canvas.Draw()
+        self.Control.Canvas.ReDraw()
 
     def Rotate(self, event):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
@@ -143,7 +146,7 @@ class Game(App):
         if self.Control.Canvas.isValidCoords(coords):
             self.CurrentFigure.Cells = coords
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
-        self.Control.Canvas.Draw()
+        self.Control.Canvas.ReDraw()
 
     def FirstScreen(self):
         # Kostyl
@@ -274,7 +277,10 @@ class Game(App):
         self.Control.Image.image = im
         self.Control.Image.grid(row=7, column=1, columnspan=2, sticky=N+E+S+W)
 
+        self.Control.Canvas.Draw()
+        self.Control.CanvasNext.Draw()
         self.NextFigure = None
+        self.LastTime = datetime.datetime.now()
         self.CreateFigure()
         self._job = None
         self.bind_all("<Left>", self.MoveLeft)
@@ -283,9 +289,11 @@ class Game(App):
         self.Tick()
 
     def Tick(self):
+        now = datetime.datetime.now()
         self.Gravity()
-        self.Control.Canvas.Draw()
-        self.Control.Lines.config(text=randint(1, 100))
+        self.Control.Canvas.ReDraw()
+        self.Control.Lines.config(text=self.LastTime-now)
+        self.LastTime = now
         self._job = self.after(500, self.Tick)
 
     def create(self):
