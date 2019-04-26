@@ -3,12 +3,16 @@
 from tkinter import Canvas, Label, Button, Frame, \
                     N, E, W, S, PhotoImage, StringVar
 import os
+import sys
+import gettext
+import locale
 
 from random import choice, randint
 from pygame import mixer
 import datetime
 
 musics = os.listdir("./music")
+gettext.install('app', './')
 
 
 class App(Frame):
@@ -118,6 +122,7 @@ class Tetris(Canvas):
 class Game(App):
     Best = 0
     Score = 0
+    Lines = 0
 
     def CreateFigure(self):
         if self.NextFigure is not None:
@@ -138,12 +143,13 @@ class Game(App):
             self.CurrentFigure.Cells = coords
         else:
             self.Control.Canvas.HoldFigure(self.CurrentFigure)
-            self.Control.Canvas.FindCompleteLines(self.CurrentFigure)
+            self.Lines += self.Control.Canvas.FindCompleteLines(self.CurrentFigure)
             self.Score += 4
             if self.Score > self.Best:
                 self.Best = self.Score
-            self.Control.ScoreString.set("Score: "+str(self.Score))
-            self.Control.BestString.set("Best: "+str(self.Best))
+            self.Control.ScoreString.set(_("Score: {}").format(self.Score))
+            self.Control.BestString.set(_("Best: {}").format(self.Best))
+            self.Control.LinesString.set(_("Lines: {}").format(self.Lines))
             self.CreateFigure()
             if self.Control.Canvas.isValidCoords(self.CurrentFigure.Cells):
                 self.Control.Canvas.HoldFigure(self.CurrentFigure)
@@ -204,9 +210,9 @@ class Game(App):
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
         self.Control.BestString = StringVar()
-        self.Control.BestString.set("Best: "+str(self.Best))
+        self.Control.BestString.set(_("Best: {}").format(self.Best))
         self.Control.ScoreString = StringVar()
-        self.Control.ScoreString.set("Score: "+str(self.Score))
+        self.Control.ScoreString.set(_("Score: {}").format(self.Score))
 
         headerIm = PhotoImage(file="tetris.png")
         self.Control.Header = Label(self.Control, image=headerIm,
@@ -221,7 +227,7 @@ class Game(App):
                                    font=("Liberation Sans", 14), bg="white")
         self.Control.Score.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.NewGame = Button(self.Control, text="New Game",
+        self.Control.NewGame = Button(self.Control, text=_("New Game"),
                                       command=self.SecondScreen, borderwidth=3,
                                       relief="solid",
                                       font=("Liberation Sans", 14), bg="white")
@@ -235,7 +241,7 @@ class Game(App):
                                   bg="white")
         self.Control.Best.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.Quit = Button(self.Control, text="Quit",
+        self.Control.Quit = Button(self.Control, text=_("Quit"),
                                    command=self.quit, borderwidth=3,
                                    relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
@@ -249,13 +255,16 @@ class Game(App):
 
     def SecondScreen(self):
         self.Score = 0
+        self.Lines = 0
         self.Control = Frame(borderwidth=3, relief="solid")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
         self.Control.BestString = StringVar()
-        self.Control.BestString.set("Best: "+str(self.Best))
+        self.Control.BestString.set(_("Best: {}").format(self.Best))
         self.Control.ScoreString = StringVar()
-        self.Control.ScoreString.set("Score: 0")
+        self.Control.ScoreString.set(_("Score: {}").format(self.Score))
+        self.Control.LinesString = StringVar()
+        self.Control.LinesString.set(_("Lines: {}").format(self.Lines))
 
         headerIm = PhotoImage(file="tetris.png")
         self.Control.Header = Label(self.Control, image=headerIm,
@@ -276,7 +285,7 @@ class Game(App):
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2,
                                      sticky=N+E+S+W)
 
-        self.Control.ChangeMusic = Button(self.Control, text="Change Music",
+        self.Control.ChangeMusic = Button(self.Control, text=_("Change Music"),
                                           command=changeMusic, borderwidth=3,
                                           relief="solid",
                                           font=("Liberation Sans", 14),
@@ -284,7 +293,7 @@ class Game(App):
         self.Control.ChangeMusic.grid(row=2, column=1, columnspan=2,
                                       sticky=N+E+S+W)
 
-        self.Control.Lines = Label(self.Control, text="Lines", borderwidth=3,
+        self.Control.Lines = Label(self.Control, textvariable=self.Control.LinesString, borderwidth=3,
                                    relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
         self.Control.Lines.grid(row=3, column=1, columnspan=2, sticky=N+E+S+W)
@@ -301,13 +310,13 @@ class Game(App):
                                   font=("Liberation Sans", 14), bg="white")
         self.Control.Best.grid(row=5, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.Pause = Button(self.Control, text="Pause",
+        self.Control.Pause = Button(self.Control, text=_("Pause"),
                                     command=self.pause, borderwidth=3,
                                     relief="solid",
                                     font=("Liberation Sans", 14), bg="white")
         self.Control.Pause.grid(row=6, column=1, sticky=N+E+S+W)
 
-        self.Control.Quit = Button(self.Control, text="Quit",
+        self.Control.Quit = Button(self.Control, text=_("Quit"),
                                    command=self.terminate, borderwidth=3,
                                    relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
@@ -346,7 +355,7 @@ class Game(App):
         self.FirstScreen()
 
     def resume(self):
-        self.Control.Pause.config(command=self.pause, text="Play")
+        self.Control.Pause.config(command=self.pause, text=_("Pause"))
         self._job = self.after(250, self.Tick)
 
     def pause(self):
@@ -354,14 +363,14 @@ class Game(App):
             self.after_cancel(self._job)
             self._job = None
 
-        self.Control.Pause.config(command=self.resume, text="Resume")
+        self.Control.Pause.config(command=self.resume, text=_("Resume"))
 
     def GameOver(self):
         if self._job is not None:
             self.after_cancel(self._job)
             self._job = None
 
-        self.Control.Pause.config(command=self.SecondScreen, text="Start")
+        self.Control.Pause.config(command=self.SecondScreen, text=_("Start"))
 
     def terminate(self):
         if self._job is not None:
