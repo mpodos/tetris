@@ -50,10 +50,10 @@ class Tetris(Canvas):
     def HoldFigure(self, figure):
         for cell in figure.Cells:
             x, y = cell
-            if x > self.columns - 1 or x < 0:
-                continue
-            if y > self.rows - 1 or y < 0:
-                continue
+            # if x > self.columns - 1 or x < 0:
+            #     continue
+            # if y > self.rows - 1 or y < 0:
+            #     continue
 
             self.Matrix[x][y] = figure.Color
 
@@ -84,6 +84,17 @@ class Tetris(Canvas):
                                                                 fill=fill,
                                                                 tags="rect")
 
+    def isValidCoords(self, coords):
+        # print(coords, self.columns)
+        for c in coords:
+            if c[0] > self.columns - 1 or c[0] < 0:
+                return False
+            if c[1] > self.rows - 1 or c[1] < 0:
+                return False
+            if self.Matrix[c[0]][c[1]] != "gray":
+                return False
+        return True
+
 
 class Game(App):
     def CreateFigure(self):
@@ -102,44 +113,37 @@ class Game(App):
 
     def Gravity(self):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
-        self.CurrentFigure.MoveDown()
-        if self.IsLanded():
-            self.CurrentFigure.MoveUp()
+        coords = self.CurrentFigure.MoveDown()
+        if self.Control.Canvas.isValidCoords(coords):
+            self.CurrentFigure.Cells = coords
+        else:
             self.Control.Canvas.HoldFigure(self.CurrentFigure)
-            for cell in self.CurrentFigure.Cells:
-                self.busy_cells.append(cell)
-
             self.CreateFigure()
-            return
-
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
 
     def MoveLeft(self, event):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
-        self.CurrentFigure.MoveLeft()
+        coords = self.CurrentFigure.MoveLeft()
+        if self.Control.Canvas.isValidCoords(coords):
+            self.CurrentFigure.Cells = coords
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
         self.Control.Canvas.Draw()
 
     def MoveRight(self, event):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
-        self.CurrentFigure.MoveRight()
+        coords = self.CurrentFigure.MoveRight()
+        if self.Control.Canvas.isValidCoords(coords):
+            self.CurrentFigure.Cells = coords
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
         self.Control.Canvas.Draw()
 
     def Rotate(self, event):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
-        self.CurrentFigure.Rotate()
+        coords = self.CurrentFigure.Rotate()
+        if self.Control.Canvas.isValidCoords(coords):
+            self.CurrentFigure.Cells = coords
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
         self.Control.Canvas.Draw()
-
-    def IsLanded(self):
-        intersected = False
-        for cell in self.CurrentFigure.Cells:
-            rows = self.Control.Canvas.rows
-            if cell in self.busy_cells or cell[1] > rows:
-                intersected = True
-                break
-        return intersected
 
     def FirstScreen(self):
         # Kostyl
@@ -156,7 +160,7 @@ class Game(App):
         self.Control.Canvas = Tetris(self.Control, width=400,
                                      height=600, borderwidth=3,
                                      relief="solid", bg="white",
-                                     rows=24, columns=26, cell=25)
+                                     rows=24, columns=16, cell=25)
         self.Control.Canvas.grid(row=1, column=0, rowspan=7)
 
         self.Control.CanvasNext = Canvas(self.Control, width=150,
@@ -176,9 +180,6 @@ class Game(App):
         self.Control.Header.image = headerIm
         self.Control.Header.grid(row=0, columnspan=4, sticky=N+E+S+W)
 
-        self.Control.Canvas = Tetris(self.Control, width=615, borderwidth=3,
-                                     relief="solid", bg="white",
-                                     rows=24, columns=26, cell=25)
         self.Control.Score = Label(self.Control, text="Score", borderwidth=3,
                                    relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
@@ -221,7 +222,7 @@ class Game(App):
 
         self.Control.Canvas = Tetris(self.Control, width=400, height=600,
                                      borderwidth=3, relief="solid", bg="white",
-                                     rows=24, columns=26, cell=25)
+                                     rows=24, columns=16, cell=25)
         self.Control.Canvas.grid(row=1, column=0, rowspan=7)
 
         self.Control.CanvasNext = Tetris(self.Control, width=200, height=200,
@@ -276,24 +277,23 @@ class Game(App):
         self.NextFigure = None
         self.CreateFigure()
         self._job = None
-        self.busy_cells = []
-        self.bind_all("<Left>", self.MoveLeft)
-        self.bind_all("<Right>", self.MoveRight)
-        self.bind_all("<space>", self.Rotate)
+        # self.bind_all("<Left>", self.MoveLeft)
+        # self.bind_all("<Right>", self.MoveRight)
+        # self.bind_all("<space>", self.Rotate)
         self.Tick()
 
     def Tick(self):
         self.Gravity()
         self.Control.Canvas.Draw()
         self.Control.Lines.config(text=randint(1, 100))
-        self._job = self.after(500, self.Tick)
+        self._job = self.after(50, self.Tick)
 
     def create(self):
         self.FirstScreen()
 
     def resume(self):
         self.Control.Pause.config(command=self.pause, text="Play")
-        self._job = self.after(500, self.Tick)
+        self._job = self.after(50, self.Tick)
 
     def pause(self):
         if self._job is not None:
@@ -329,14 +329,15 @@ class Figure():
         ("purple", (0, 0), (1, 0), (2, 0), (1, 1)),     # T
     )
 
-    def __init__(self, x=7, y=0, angle=0):
+    def __init__(self, x=7, y=0):
         figure = choice(self.SHAPES)
         self.Color = figure[0]
         self.Cells = [(x + cell[0], y + cell[1]) for cell in figure[1:]]
-
-        times = int(angle / 90)
+        coords = self.Cells
+        times = randint(0, 2)
         for _ in range(times):
-            self.Rotate()
+            coords = self.Rotate()
+        self.Cells = coords
 
     def Shifted(self):
         shifted = Figure()
@@ -344,21 +345,17 @@ class Figure():
         shifted.Cells = [(cell[0]-4, cell[1]+3) for cell in self.Cells]
         return shifted
 
-    def MoveUp(self):
-        new_cells = [(cell[0], cell[1]-1) for cell in self.Cells]
-        self.Cells = new_cells
-
     def MoveDown(self):
         new_cells = [(cell[0], cell[1]+1) for cell in self.Cells]
-        self.Cells = new_cells
+        return new_cells
 
     def MoveLeft(self):
         new_cells = [(cell[0]-1, cell[1]) for cell in self.Cells]
-        self.Cells = new_cells
+        return new_cells
 
     def MoveRight(self):
         new_cells = [(cell[0]+1, cell[1]) for cell in self.Cells]
-        self.Cells = new_cells
+        return new_cells
 
     def Rotate(self):
         shift_x = 100000
@@ -385,9 +382,7 @@ class Figure():
         for cell in new_cells:
             new_cells_shifted.append((cell[0]-min_x+shift_x,
                                       cell[1]-min_y+shift_y))
-
-        # Implement me
-        self.Cells = new_cells_shifted
+        return new_cells_shifted
 
 
 if __name__ == "__main__":
