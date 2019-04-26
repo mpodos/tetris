@@ -98,6 +98,27 @@ class Tetris(Canvas):
                 return False
         return True
 
+    def LineComplete(self, i):
+        for j in range(self.columns):
+            if self.Matrix[j][i] == "gray":
+                return False
+        return True
+
+    def DeleteLine(self, idx):
+        for j in range(self.columns):
+            for i in range(idx, 0,-1):
+                if i > -1:
+                    self.Matrix[j][i] = self.Matrix[j][i-1]
+            #self.Matrix[j][i] = "gray"
+
+    def FindCompleteLines(self, figure):
+        count = 0
+        for cell in figure.Cells:
+            if self.LineComplete(cell[1]):
+                self.DeleteLine(cell[1])
+                count += 1
+                
+        return count
 
 class Game(App):
     Best = 0
@@ -123,6 +144,7 @@ class Game(App):
             self.CurrentFigure.Cells = coords
         else:
             self.Control.Canvas.HoldFigure(self.CurrentFigure)
+            self.Control.Canvas.FindCompleteLines(self.CurrentFigure)
             self.Score += 4
             if self.Score > self.Best:
                 self.Best = self.Score
@@ -156,7 +178,6 @@ class Game(App):
         self.Control.Canvas.ReDraw()
 
     def FirstScreen(self):
-        # Kostyl
         self.Control = Frame(borderwidth=3, relief="solid", bg="white")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
@@ -178,7 +199,6 @@ class Game(App):
                                          relief="solid", bg="white")
         self.Control.CanvasNext.grid(row=1, column=1, columnspan=2,
                                      sticky=N+E+S+W)
-        # End of kostyl
 
         self.Control = Frame(borderwidth=3, relief="solid", bg="white")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
@@ -314,14 +334,14 @@ class Game(App):
         self.Control.Canvas.ReDraw()
         self.Control.Lines.config(text=self.LastTime-now)
         self.LastTime = now
-        self._job = self.after(500, self.Tick)
+        self._job = self.after(250, self.Tick)
 
     def create(self):
         self.FirstScreen()
 
     def resume(self):
         self.Control.Pause.config(command=self.pause, text="Play")
-        self._job = self.after(500, self.Tick)
+        self._job = self.after(250, self.Tick)
 
     def pause(self):
         if self._job is not None:
