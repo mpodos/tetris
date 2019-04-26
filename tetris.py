@@ -128,11 +128,13 @@ class Tetris(Canvas):
 
 
 class Game(App):
+    '''Game class'''
     Best = 0
     Score = 0
     Lines = 0
 
     def CreateFigure(self):
+        '''Create figure and next figure finction'''
         if self.NextFigure is not None:
             self.Control.CanvasNext.RemoveFigure(self.NextFigure.Shifted())
             self.CurrentFigure = self.NextFigure
@@ -145,6 +147,7 @@ class Game(App):
         self.Control.CanvasNext.ReDraw()
 
     def Gravity(self, event=None):
+        '''Move the figure one cell down and draw function'''
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
         coords = self.CurrentFigure.MoveDown()
         if self.Control.Canvas.isValidCoords(coords):
@@ -169,6 +172,7 @@ class Game(App):
         return 1
 
     def MoveLeft(self, event):
+        '''Move the figure one cell left and draw function'''
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
         coords = self.CurrentFigure.MoveLeft()
         if self.Control.Canvas.isValidCoords(coords):
@@ -177,6 +181,7 @@ class Game(App):
         self.Control.Canvas.ReDraw()
 
     def MoveRight(self, event):
+        '''Move the figure one cell right and draw function'''
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
         coords = self.CurrentFigure.MoveRight()
         if self.Control.Canvas.isValidCoords(coords):
@@ -185,6 +190,7 @@ class Game(App):
         self.Control.Canvas.ReDraw()
 
     def Rotate(self, event):
+        '''Rotate the figure clockwise and draw function'''
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
         coords = self.CurrentFigure.Rotate()
         if self.Control.Canvas.isValidCoords(coords):
@@ -193,6 +199,7 @@ class Game(App):
         self.Control.Canvas.ReDraw()
 
     def FirstScreen(self):
+        '''Start screen control'''
         self.Control = Frame(borderwidth=3, relief="solid", bg="white")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
@@ -263,6 +270,7 @@ class Game(App):
         self.Control.grid_columnconfigure(0, minsize=35)
 
     def SecondScreen(self):
+        '''Game screen control'''
         self.Score = 0
         self.Lines = 0
         self.Control = Frame(borderwidth=3, relief="solid")
@@ -352,6 +360,7 @@ class Game(App):
         self.Tick()
 
     def Tick(self):
+        '''Game timer'''
         now = datetime.datetime.now()
         flag = self.Gravity()
         if flag == 0:
@@ -362,13 +371,16 @@ class Game(App):
         self._job = self.after(250, self.Tick)
 
     def create(self):
+        '''Create start screen function'''
         self.FirstScreen()
 
     def resume(self):
+        '''Resume game function'''
         self.Control.Pause.config(command=self.pause, text=_("Pause"))
         self._job = self.after(250, self.Tick)
 
     def pause(self):
+        '''Pause game function'''
         if self._job is not None:
             self.after_cancel(self._job)
             self._job = None
@@ -376,6 +388,7 @@ class Game(App):
         self.Control.Pause.config(command=self.resume, text=_("Resume"))
 
     def GameOver(self):
+        '''Stop the game'''
         if self._job is not None:
             self.after_cancel(self._job)
             self._job = None
@@ -383,6 +396,7 @@ class Game(App):
         self.Control.Pause.config(command=self.SecondScreen, text=_("Start"))
 
     def terminate(self):
+        '''Quit to start screen'''
         if self._job is not None:
             self.after_cancel(self._job)
             self._job = None
@@ -390,15 +404,16 @@ class Game(App):
 
 
 mixer.init()
-'''Функция смены фоновой музыки'''
 
 
 def changeMusic():
+    '''Функция смены фоновой музыки'''
     mixer.music.load('./music/'+choice(musics))
     mixer.music.play(-1)
 
 
 class Figure():
+    '''Tetris figure class'''
     SHAPES = (
         ("yellow", (0, 0), (0, 1), (1, 0), (1, 1)),     # O
         ("lightblue", (0, 0), (0, 1), (0, 2), (0, 3)),  # I
@@ -410,6 +425,7 @@ class Figure():
     )
 
     def __init__(self, x=7, y=0):
+        '''Init figure'''
         figure = choice(self.SHAPES)
         self.Color = figure[0]
         self.Cells = [(x + cell[0], y + cell[1]) for cell in figure[1:]]
@@ -420,24 +436,29 @@ class Figure():
         self.Cells = coords
 
     def Shifted(self):
+        '''Shift the figure at second screen'''
         shifted = Figure()
         shifted.Color = self.Color
         shifted.Cells = [(cell[0]-4, cell[1]+3) for cell in self.Cells]
         return shifted
 
     def MoveDown(self):
+        '''Move the figure down'''
         new_cells = [(cell[0], cell[1]+1) for cell in self.Cells]
         return new_cells
 
     def MoveLeft(self):
+        '''Move the figure left'''
         new_cells = [(cell[0]-1, cell[1]) for cell in self.Cells]
         return new_cells
 
     def MoveRight(self):
+        '''Move the figure right'''
         new_cells = [(cell[0]+1, cell[1]) for cell in self.Cells]
         return new_cells
 
     def Rotate(self):
+        '''Rotate the figure'''
         shift_x = 100000
         shift_y = 100000
         old_cells_shifted = []
@@ -466,6 +487,7 @@ class Figure():
 
 
 if __name__ == "__main__":
+    '''Start main function'''
     mixer.music.load('./music/'+choice(musics))
     mixer.music.play(-1)
     app = Game(Title="Tetris")
