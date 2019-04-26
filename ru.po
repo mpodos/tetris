@@ -1,0 +1,55 @@
+# Russian translations for PACKAGE package
+# Английские переводы для пакета PACKAGE.
+# Copyright (C) 2019 ORGANIZATION
+# mpodos <maramie@yandex.ru>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2019-04-26 14:56+MSK\n"
+"PO-Revision-Date: 2019-04-26 14:56+0300\n"
+"Last-Translator: mpodos <maramie@yandex.ru>\n"
+"Language-Team: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: tetris.py:150 tetris.py:215 tetris.py:265
+msgid "Score: {}"
+msgstr "Счет: {}"
+
+#: tetris.py:151 tetris.py:213 tetris.py:263
+msgid "Best: {}"
+msgstr "Лучший: {}"
+
+#: tetris.py:152 tetris.py:267
+msgid "Lines: {}"
+msgstr "Линий: {}"
+
+#: tetris.py:230
+msgid "New Game"
+msgstr "Новая Игра"
+
+#: tetris.py:244 tetris.py:319
+msgid "Quit"
+msgstr "Выход"
+
+#: tetris.py:288
+msgid "Change Music"
+msgstr "Смена Мелодии"
+
+#: tetris.py:313 tetris.py:358
+msgid "Pause"
+msgstr "Пауза"
+
+#: tetris.py:366
+msgid "Resume"
+msgstr "Играть"
+
+#: tetris.py:373
+msgid "Start"
+msgstr "Заново"

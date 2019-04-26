@@ -1,0 +1,53 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2019-04-26 14:56+MSK\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: tetris.py:150 tetris.py:215 tetris.py:265
+msgid "Score: {}"
+msgstr ""
+
+#: tetris.py:151 tetris.py:213 tetris.py:263
+msgid "Best: {}"
+msgstr ""
+
+#: tetris.py:152 tetris.py:267
+msgid "Lines: {}"
+msgstr ""
+
+#: tetris.py:230
+msgid "New Game"
+msgstr ""
+
+#: tetris.py:244 tetris.py:319
+msgid "Quit"
+msgstr ""
+
+#: tetris.py:288
+msgid "Change Music"
+msgstr ""
+
+#: tetris.py:313 tetris.py:358
+msgid "Pause"
+msgstr ""
+
+#: tetris.py:366
+msgid "Resume"
+msgstr ""
+
+#: tetris.py:373
+msgid "Start"
+msgstr ""
+
