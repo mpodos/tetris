@@ -20,3 +20,6 @@
 <p align="left">
   <img src=start.jpg width="500" title="start interface">
 </p>
+
+## Запуск автотестов
+python -m unittest test.py
