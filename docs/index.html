@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to tetris’s documentation! &#8212; tetris mvp documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-tetris-s-documentation">
+<h1>Welcome to tetris’s documentation!<a class="headerlink" href="#welcome-to-tetris-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-tetris"></span><dl class="class">
+<dt id="tetris.App">
+<em class="property">class </em><code class="descclassname">tetris.</code><code class="descname">App</code><span class="sig-paren">(</span><em>master=None</em>, <em>Title='Application'</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.App" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base framed application class</p>
+<dl class="method">
+<dt id="tetris.App.create">
+<code class="descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.App.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create all the widgets</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="tetris.Figure">
+<em class="property">class </em><code class="descclassname">tetris.</code><code class="descname">Figure</code><span class="sig-paren">(</span><em>x=7</em>, <em>y=0</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tetris figure class</p>
+<dl class="method">
+<dt id="tetris.Figure.MoveDown">
+<code class="descname">MoveDown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Figure.MoveDown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the figure down</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Figure.MoveLeft">
+<code class="descname">MoveLeft</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Figure.MoveLeft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the figure left</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Figure.MoveRight">
+<code class="descname">MoveRight</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Figure.MoveRight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the figure right</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Figure.Rotate">
+<code class="descname">Rotate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Figure.Rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate the figure</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Figure.Shifted">
+<code class="descname">Shifted</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Figure.Shifted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shift the figure at second screen</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="tetris.Game">
+<em class="property">class </em><code class="descclassname">tetris.</code><code class="descname">Game</code><span class="sig-paren">(</span><em>master=None</em>, <em>Title='Application'</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game" title="Permalink to this definition">¶</a></dt>
+<dd><p>Game class</p>
+<dl class="method">
+<dt id="tetris.Game.CreateFigure">
+<code class="descname">CreateFigure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.CreateFigure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create figure and next figure finction</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.FirstScreen">
+<code class="descname">FirstScreen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.FirstScreen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start screen control</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.GameOver">
+<code class="descname">GameOver</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.GameOver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the game</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.Gravity">
+<code class="descname">Gravity</code><span class="sig-paren">(</span><em>event=None</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.Gravity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the figure one cell down and draw function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.MoveLeft">
+<code class="descname">MoveLeft</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.MoveLeft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the figure one cell left and draw function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.MoveRight">
+<code class="descname">MoveRight</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.MoveRight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the figure one cell right and draw function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.Rotate">
+<code class="descname">Rotate</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.Rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate the figure clockwise and draw function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.SecondScreen">
+<code class="descname">SecondScreen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.SecondScreen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Game screen control</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.Tick">
+<code class="descname">Tick</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.Tick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Game timer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.create">
+<code class="descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create start screen function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.pause">
+<code class="descname">pause</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.pause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pause game function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.resume">
+<code class="descname">resume</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resume game function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Game.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Game.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quit to start screen</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="tetris.Tetris">
+<em class="property">class </em><code class="descclassname">tetris.</code><code class="descname">Tetris</code><span class="sig-paren">(</span><em>master=None</em>, <em>*ap</em>, <em>foreground='black'</em>, <em>rows</em>, <em>columns</em>, <em>cell</em>, <em>**an</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Tetris" title="Permalink to this definition">¶</a></dt>
+<dd><p>Screen class</p>
+<dl class="method">
+<dt id="tetris.Tetris.DeleteLine">
+<code class="descname">DeleteLine</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Tetris.DeleteLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete line from screen function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Tetris.Draw">
+<code class="descname">Draw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Tetris.Draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw screen</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Tetris.FindCompleteLines">
+<code class="descname">FindCompleteLines</code><span class="sig-paren">(</span><em>figure</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Tetris.FindCompleteLines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find completed by figure lines</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Tetris.HoldFigure">
+<code class="descname">HoldFigure</code><span class="sig-paren">(</span><em>figure</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Tetris.HoldFigure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add figure to the matrix function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Tetris.LineComplete">
+<code class="descname">LineComplete</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Tetris.LineComplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checking whether line is full</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Tetris.ReDraw">
+<code class="descname">ReDraw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Tetris.ReDraw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redraw figure function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Tetris.RemoveFigure">
+<code class="descname">RemoveFigure</code><span class="sig-paren">(</span><em>figure</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Tetris.RemoveFigure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove figure from  the matrix function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tetris.Tetris.isValidCoords">
+<code class="descname">isValidCoords</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#tetris.Tetris.isValidCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checking whether the cells are busy</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="tetris.changeMusic">
+<code class="descclassname">tetris.</code><code class="descname">changeMusic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tetris.changeMusic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Функция смены фоновой музыки</p>
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">tetris</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, mpodos, whcrc.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
