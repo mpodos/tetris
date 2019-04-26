@@ -16,6 +16,7 @@ gettext.install('app', './')
 class App(Frame):
     '''Base framed application class'''
     def __init__(self, master=None, Title="Application"):
+        '''init App class'''
         Frame.__init__(self, master)
         self.master.rowconfigure(0, weight=1)
         self.master.columnconfigure(0, weight=1)
@@ -30,9 +31,10 @@ class App(Frame):
 
 
 class Tetris(Canvas):
-
+    '''Screen class'''
     def __init__(self, master=None, *ap, foreground="black", rows,
                  columns, cell, **an):
+        '''Init screen function'''
         self.foreground = StringVar()
         self.foreground.set(foreground)
         Canvas.__init__(self, master, *ap, **an)
@@ -51,12 +53,14 @@ class Tetris(Canvas):
         self.Rects = {}
 
     def HoldFigure(self, figure):
+        '''Add figure to the matrix function'''
         for cell in figure.Cells:
             x, y = cell
 
             self.Matrix[x][y] = figure.Color
 
     def RemoveFigure(self, figure):
+        '''Remove figure from  the matrix function'''
         for cell in figure.Cells:
             x, y = cell
             if x > self.columns - 1 or x < 0:
@@ -67,6 +71,7 @@ class Tetris(Canvas):
             self.Matrix[x][y] = "gray"
 
     def Draw(self):
+        '''Draw screen'''
         self.Rects = {}
         for column in range(self.columns):
             for row in range(self.rows):
@@ -81,12 +86,14 @@ class Tetris(Canvas):
                                                                 tags="rect")
 
     def ReDraw(self):
+        '''Redraw figure function'''
         for column in range(self.columns):
             for row in range(self.rows):
                 self.itemconfig(self.Rects[row, column],
                                 fill=self.Matrix[column][row])
 
     def isValidCoords(self, coords):
+        '''Checking whether the cells are busy'''
         for c in coords:
             if c[0] > self.columns - 1 or c[0] < 0:
                 return False
@@ -97,18 +104,21 @@ class Tetris(Canvas):
         return True
 
     def LineComplete(self, i):
+        '''Checking whether line is full'''
         for j in range(self.columns):
             if self.Matrix[j][i] == "gray":
                 return False
         return True
 
     def DeleteLine(self, idx):
+        '''Delete line from screen function'''
         for j in range(self.columns):
             for i in range(idx, 0, -1):
                 if i > -1:
                     self.Matrix[j][i] = self.Matrix[j][i-1]
 
     def FindCompleteLines(self, figure):
+        '''Find completed by figure lines'''
         count = 0
         for cell in figure.Cells:
             if self.LineComplete(cell[1]):
