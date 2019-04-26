@@ -277,23 +277,23 @@ class Game(App):
         self.NextFigure = None
         self.CreateFigure()
         self._job = None
-        # self.bind_all("<Left>", self.MoveLeft)
-        # self.bind_all("<Right>", self.MoveRight)
-        # self.bind_all("<space>", self.Rotate)
+        self.bind_all("<Left>", self.MoveLeft)
+        self.bind_all("<Right>", self.MoveRight)
+        self.bind_all("<space>", self.Rotate)
         self.Tick()
 
     def Tick(self):
         self.Gravity()
         self.Control.Canvas.Draw()
         self.Control.Lines.config(text=randint(1, 100))
-        self._job = self.after(50, self.Tick)
+        self._job = self.after(500, self.Tick)
 
     def create(self):
         self.FirstScreen()
 
     def resume(self):
         self.Control.Pause.config(command=self.pause, text="Play")
-        self._job = self.after(50, self.Tick)
+        self._job = self.after(500, self.Tick)
 
     def pause(self):
         if self._job is not None:
