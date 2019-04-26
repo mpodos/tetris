@@ -3,9 +3,7 @@
 from tkinter import Canvas, Label, Button, Frame, \
                     N, E, W, S, PhotoImage, StringVar
 import os
-import sys
 import gettext
-import locale
 
 from random import choice, randint
 from pygame import mixer
@@ -143,7 +141,8 @@ class Game(App):
             self.CurrentFigure.Cells = coords
         else:
             self.Control.Canvas.HoldFigure(self.CurrentFigure)
-            self.Lines += self.Control.Canvas.FindCompleteLines(self.CurrentFigure)
+            lines = self.Control.Canvas.FindCompleteLines(self.CurrentFigure)
+            self.Lines += lines
             self.Score += 4
             if self.Score > self.Best:
                 self.Best = self.Score
@@ -293,8 +292,9 @@ class Game(App):
         self.Control.ChangeMusic.grid(row=2, column=1, columnspan=2,
                                       sticky=N+E+S+W)
 
-        self.Control.Lines = Label(self.Control, textvariable=self.Control.LinesString, borderwidth=3,
-                                   relief="solid",
+        self.Control.Lines = Label(self.Control,
+                                   textvariable=self.Control.LinesString,
+                                   borderwidth=3, relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
         self.Control.Lines.grid(row=3, column=1, columnspan=2, sticky=N+E+S+W)
 
