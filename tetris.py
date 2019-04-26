@@ -51,10 +51,6 @@ class Tetris(Canvas):
     def HoldFigure(self, figure):
         for cell in figure.Cells:
             x, y = cell
-            # if x > self.columns - 1 or x < 0:
-            #     continue
-            # if y > self.rows - 1 or y < 0:
-            #     continue
 
             self.Matrix[x][y] = figure.Color
 
@@ -88,7 +84,6 @@ class Tetris(Canvas):
                 self.itemconfig(self.Rects[row, column], fill=self.Matrix[column][row])
 
     def isValidCoords(self, coords):
-        # print(coords, self.columns)
         for c in coords:
             if c[0] > self.columns - 1 or c[0] < 0:
                 return False
@@ -109,7 +104,6 @@ class Tetris(Canvas):
             for i in range(idx, 0,-1):
                 if i > -1:
                     self.Matrix[j][i] = self.Matrix[j][i-1]
-            #self.Matrix[j][i] = "gray"
 
     def FindCompleteLines(self, figure):
         count = 0
@@ -130,8 +124,6 @@ class Game(App):
         else:
             self.CurrentFigure = Figure()
 
-        self.Control.Canvas.HoldFigure(self.CurrentFigure)
-
         # Draw next figure
         self.NextFigure = Figure()
         self.Control.CanvasNext.HoldFigure(self.NextFigure.Shifted())
@@ -151,7 +143,13 @@ class Game(App):
             self.Control.ScoreString.set("Score: "+str(self.Score))
             self.Control.BestString.set("Best: "+str(self.Best))
             self.CreateFigure()
+            if self.Control.Canvas.isValidCoords(self.CurrentFigure.Cells):
+                self.Control.Canvas.HoldFigure(self.CurrentFigure)
+            else:
+                self.GameOver()
+                return 0
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
+        return 1
 
     def MoveLeft(self, event):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
@@ -246,12 +244,11 @@ class Game(App):
 
     def SecondScreen(self):
         self.Score = 0
-        # self.ScoreString.set("Score: 0")
         self.Control = Frame(borderwidth=3, relief="solid")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
         self.Control.BestString = StringVar()
-        self.Control.BestString.set("Best: 0")
+        self.Control.BestString.set("Best: "+str(self.Best))
         self.Control.ScoreString = StringVar()
         self.Control.ScoreString.set("Score: 0")
 
@@ -330,7 +327,9 @@ class Game(App):
 
     def Tick(self):
         now = datetime.datetime.now()
-        self.Gravity()
+        flag = self.Gravity()
+        if flag == 0:
+            return
         self.Control.Canvas.ReDraw()
         self.Control.Lines.config(text=self.LastTime-now)
         self.LastTime = now
@@ -349,6 +348,13 @@ class Game(App):
             self._job = None
 
         self.Control.Pause.config(command=self.resume, text="Resume")
+    
+    def GameOver(self):
+        if self._job is not None:
+            self.after_cancel(self._job)
+            self._job = None
+
+        self.Control.Pause.config(command=self.SecondScreen, text="Start")
 
     def terminate(self):
         if self._job is not None:
