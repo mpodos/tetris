@@ -121,6 +121,8 @@ class Tetris(Canvas):
         return count
 
 class Game(App):
+    Best = 0
+    Score = 0
     def CreateFigure(self):
         if self.NextFigure is not None:
             self.Control.CanvasNext.RemoveFigure(self.NextFigure.Shifted())
@@ -135,7 +137,7 @@ class Game(App):
         self.Control.CanvasNext.HoldFigure(self.NextFigure.Shifted())
         self.Control.CanvasNext.ReDraw()
 
-    def Gravity(self):
+    def Gravity(self, event=None):
         self.Control.Canvas.RemoveFigure(self.CurrentFigure)
         coords = self.CurrentFigure.MoveDown()
         if self.Control.Canvas.isValidCoords(coords):
@@ -143,6 +145,11 @@ class Game(App):
         else:
             self.Control.Canvas.HoldFigure(self.CurrentFigure)
             self.Control.Canvas.FindCompleteLines(self.CurrentFigure)
+            self.Score += 4
+            if self.Score > self.Best:
+                self.Best = self.Score
+            self.Control.ScoreString.set("Score: "+str(self.Score))
+            self.Control.BestString.set("Best: "+str(self.Best))
             self.CreateFigure()
         self.Control.Canvas.HoldFigure(self.CurrentFigure)
 
@@ -196,6 +203,11 @@ class Game(App):
         self.Control = Frame(borderwidth=3, relief="solid", bg="white")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
 
+        self.Control.BestString = StringVar()
+        self.Control.BestString.set("Best: "+str(self.Best))
+        self.Control.ScoreString = StringVar()
+        self.Control.ScoreString.set("Score: "+str(self.Score))
+
         headerIm = PhotoImage(file="tetris.png")
         self.Control.Header = Label(self.Control, image=headerIm,
                                     borderwidth=3, relief="solid",
@@ -203,7 +215,7 @@ class Game(App):
         self.Control.Header.image = headerIm
         self.Control.Header.grid(row=0, columnspan=4, sticky=N+E+S+W)
 
-        self.Control.Score = Label(self.Control, text="Score", borderwidth=3,
+        self.Control.Score = Label(self.Control, textvariable=self.Control.ScoreString, borderwidth=3,
                                    relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
         self.Control.Score.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
@@ -215,7 +227,7 @@ class Game(App):
         self.Control.NewGame.grid(row=4, column=1, columnspan=2,
                                   sticky=N+E+S+W)
 
-        self.Control.Best = Label(self.Control, text="Best", borderwidth=3,
+        self.Control.Best = Label(self.Control, textvariable=self.Control.BestString, borderwidth=3,
                                   relief="solid", font=("Liberation Sans", 14),
                                   bg="white")
         self.Control.Best.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
@@ -233,8 +245,15 @@ class Game(App):
         self.Control.grid_columnconfigure(0, minsize=35)
 
     def SecondScreen(self):
+        self.Score = 0
+        # self.ScoreString.set("Score: 0")
         self.Control = Frame(borderwidth=3, relief="solid")
         self.Control.grid(row=0, column=0, sticky=N+E+S+W)
+
+        self.Control.BestString = StringVar()
+        self.Control.BestString.set("Best: 0")
+        self.Control.ScoreString = StringVar()
+        self.Control.ScoreString.set("Score: 0")
 
         headerIm = PhotoImage(file="tetris.png")
         self.Control.Header = Label(self.Control, image=headerIm,
@@ -268,12 +287,12 @@ class Game(App):
                                    font=("Liberation Sans", 14), bg="white")
         self.Control.Lines.grid(row=3, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.Score = Label(self.Control, text="Score", borderwidth=3,
+        self.Control.Score = Label(self.Control, textvariable=self.Control.ScoreString, borderwidth=3,
                                    relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
         self.Control.Score.grid(row=4, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.Best = Label(self.Control, text="Best", borderwidth=3,
+        self.Control.Best = Label(self.Control, textvariable=self.Control.BestString, borderwidth=3,
                                   relief="solid",
                                   font=("Liberation Sans", 14), bg="white")
         self.Control.Best.grid(row=5, column=1, columnspan=2, sticky=N+E+S+W)
@@ -305,7 +324,8 @@ class Game(App):
         self._job = None
         self.bind_all("<Left>", self.MoveLeft)
         self.bind_all("<Right>", self.MoveRight)
-        self.bind_all("<space>", self.Rotate)
+        self.bind_all("<Up>", self.Rotate)
+        self.bind_all("<Down>", self.Gravity)
         self.Tick()
 
     def Tick(self):
@@ -400,7 +420,7 @@ class Figure():
         min_x = 0
         min_y = 0
         for cell in old_cells_shifted:
-            tmp_cell = (cell[1], -cell[0])
+            tmp_cell = (-cell[1], cell[0])
             if tmp_cell[0] < min_x:
                 min_x = tmp_cell[0]
             if tmp_cell[1] < min_y:
