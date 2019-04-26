@@ -77,11 +77,12 @@ class Tetris(Canvas):
                                                                 x2, y2,
                                                                 fill=fill,
                                                                 tags="rect")
-    
+
     def ReDraw(self):
         for column in range(self.columns):
             for row in range(self.rows):
-                self.itemconfig(self.Rects[row, column], fill=self.Matrix[column][row])
+                self.itemconfig(self.Rects[row, column],
+                                fill=self.Matrix[column][row])
 
     def isValidCoords(self, coords):
         for c in coords:
@@ -101,7 +102,7 @@ class Tetris(Canvas):
 
     def DeleteLine(self, idx):
         for j in range(self.columns):
-            for i in range(idx, 0,-1):
+            for i in range(idx, 0, -1):
                 if i > -1:
                     self.Matrix[j][i] = self.Matrix[j][i-1]
 
@@ -111,12 +112,13 @@ class Tetris(Canvas):
             if self.LineComplete(cell[1]):
                 self.DeleteLine(cell[1])
                 count += 1
-                
         return count
+
 
 class Game(App):
     Best = 0
     Score = 0
+
     def CreateFigure(self):
         if self.NextFigure is not None:
             self.Control.CanvasNext.RemoveFigure(self.NextFigure.Shifted())
@@ -213,8 +215,9 @@ class Game(App):
         self.Control.Header.image = headerIm
         self.Control.Header.grid(row=0, columnspan=4, sticky=N+E+S+W)
 
-        self.Control.Score = Label(self.Control, textvariable=self.Control.ScoreString, borderwidth=3,
-                                   relief="solid",
+        self.Control.Score = Label(self.Control,
+                                   textvariable=self.Control.ScoreString,
+                                   borderwidth=3, relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
         self.Control.Score.grid(row=2, column=1, columnspan=2, sticky=N+E+S+W)
 
@@ -225,7 +228,9 @@ class Game(App):
         self.Control.NewGame.grid(row=4, column=1, columnspan=2,
                                   sticky=N+E+S+W)
 
-        self.Control.Best = Label(self.Control, textvariable=self.Control.BestString, borderwidth=3,
+        self.Control.Best = Label(self.Control,
+                                  textvariable=self.Control.BestString,
+                                  borderwidth=3,
                                   relief="solid", font=("Liberation Sans", 14),
                                   bg="white")
         self.Control.Best.grid(row=6, column=1, columnspan=2, sticky=N+E+S+W)
@@ -284,13 +289,15 @@ class Game(App):
                                    font=("Liberation Sans", 14), bg="white")
         self.Control.Lines.grid(row=3, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.Score = Label(self.Control, textvariable=self.Control.ScoreString, borderwidth=3,
-                                   relief="solid",
+        self.Control.Score = Label(self.Control,
+                                   textvariable=self.Control.ScoreString,
+                                   borderwidth=3, relief="solid",
                                    font=("Liberation Sans", 14), bg="white")
         self.Control.Score.grid(row=4, column=1, columnspan=2, sticky=N+E+S+W)
 
-        self.Control.Best = Label(self.Control, textvariable=self.Control.BestString, borderwidth=3,
-                                  relief="solid",
+        self.Control.Best = Label(self.Control,
+                                  textvariable=self.Control.BestString,
+                                  borderwidth=3, relief="solid",
                                   font=("Liberation Sans", 14), bg="white")
         self.Control.Best.grid(row=5, column=1, columnspan=2, sticky=N+E+S+W)
 
@@ -348,7 +355,7 @@ class Game(App):
             self._job = None
 
         self.Control.Pause.config(command=self.resume, text="Resume")
-    
+
     def GameOver(self):
         if self._job is not None:
             self.after_cancel(self._job)
