@@ -120,10 +120,14 @@ class Tetris(Canvas):
     def FindCompleteLines(self, figure):
         '''Find completed by figure lines'''
         count = 0
+        toDelete = []
         for cell in figure.Cells:
             if self.LineComplete(cell[1]):
-                self.DeleteLine(cell[1])
+                toDelete.append(cell[1])
                 count += 1
+        toDelete = set(sorted(toDelete))
+        for line in toDelete:
+            self.DeleteLine(cell[1])
         return count
 
 
