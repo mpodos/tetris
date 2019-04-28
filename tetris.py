@@ -392,6 +392,7 @@ class Game(App):
         if self._job is not None:
             self.after_cancel(self._job)
             self._job = None
+        self.unbind_all("<Down>")
 
         self.Control.Pause.config(command=self.SecondScreen, text=_("Start"))
 
