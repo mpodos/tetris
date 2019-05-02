@@ -127,7 +127,7 @@ class Tetris(Canvas):
                 count += 1
         toDelete = set(sorted(toDelete))
         for line in toDelete:
-            self.DeleteLine(cell[1])
+            self.DeleteLine(line)
         return count
 
 
@@ -382,12 +382,21 @@ class Game(App):
         '''Resume game function'''
         self.Control.Pause.config(command=self.pause, text=_("Pause"))
         self._job = self.after(250, self.Tick)
+        self.bind_all("<Left>", self.MoveLeft)
+        self.bind_all("<Right>", self.MoveRight)
+        self.bind_all("<Up>", self.Rotate)
+        self.bind_all("<Down>", self.Gravity)
 
     def pause(self):
         '''Pause game function'''
         if self._job is not None:
             self.after_cancel(self._job)
             self._job = None
+
+        self.unbind_all("<Left>")
+        self.unbind_all("<Right>")
+        self.unbind_all("<Up>")
+        self.unbind_all("<Down>")
 
         self.Control.Pause.config(command=self.resume, text=_("Resume"))
 
@@ -396,6 +405,9 @@ class Game(App):
         if self._job is not None:
             self.after_cancel(self._job)
             self._job = None
+        self.unbind_all("<Left>")
+        self.unbind_all("<Right>")
+        self.unbind_all("<Up>")
         self.unbind_all("<Down>")
 
         self.Control.Pause.config(command=self.SecondScreen, text=_("Start"))
